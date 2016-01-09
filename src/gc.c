@@ -108,6 +108,7 @@ void gc() {
         if (Run.eventlist)
                 gc_event(&Run.eventlist);
         FREE(Run.eventlist_dir);
+        FREE(Run.alert_command);
         FREE(Run.mygroup);
         if (Run.httpd.flags & Httpd_Net) {
                 FREE(Run.httpd.socket.net.address);

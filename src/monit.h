@@ -1130,6 +1130,7 @@ struct myrun {
         int  handler_queue[Handler_Max + 1];       /**< The handlers queue counter */
         Service_T system;                          /**< The general system service */
         char *eventlist_dir;                   /**< The event queue base directory */
+        char *alert_command;                   /**< Command to send alert messages */
 
         /** An object holding Monit HTTP interface setup */
         struct {

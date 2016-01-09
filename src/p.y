@@ -310,7 +310,7 @@ static int verifyMaxForward(int);
 %token LIMITS SENDEXPECTBUFFER EXPECTBUFFER FILECONTENTBUFFER HTTPCONTENTBUFFER NETWORKTIMEOUT
 %token PIDFILE START STOP PATHTOK
 %token HOST HOSTNAME PORT IPV4 IPV6 TYPE UDP TCP TCPSSL PROTOCOL CONNECTION
-%token ALERT NOALERT MAILFORMAT UNIXSOCKET SIGNATURE
+%token ALERTCOMMAND ALERT NOALERT MAILFORMAT UNIXSOCKET SIGNATURE
 %token TIMEOUT RETRY RESTART CHECKSUM EVERY NOTEVERY
 %token DEFAULT HTTP HTTPS APACHESTATUS FTP SMTP SMTPS POP POPS IMAP IMAPS CLAMAV NNTP NTP3 MYSQL DNS WEBSOCKET
 %token SSH DWP LDAP2 LDAP3 RDATE RSYNC TNS PGSQL POSTFIXPOLICY SIP LMTP GPS RADIUS MEMCACHE REDIS MONGODB SIEVE
@@ -351,6 +351,7 @@ statement_list  : statement
                 ;
 
 statement       : setalert
+                | setalertcommand
                 | setssl
                 | setdaemon
                 | setlog
@@ -872,6 +873,11 @@ setmailservers  : SET MAILSERVER mailserverlist nettimeout hostname {
                    if (($<number>4) > SMTP_TIMEOUT)
                         Run.mailserver_timeout = $<number>4;
                    Run.mail_hostname = $<string>5;
+                  }
+                ;
+
+setalertcommand : SET ALERTCOMMAND PATH {
+                    Run.alert_command = $3;
                   }
                 ;
 

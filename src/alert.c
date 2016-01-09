@@ -174,6 +174,10 @@ static void substitute(Mail_T m, Event_T e) {
         Util_replaceString(&m->subject, "$DATE", timestamp);
         Util_replaceString(&m->message, "$DATE", timestamp);
 
+        Time_fmt(timestamp, STRLEN, "%s", e->collected.tv_sec);
+        Util_replaceString(&m->subject, "$TIMESTAMP", timestamp);
+        Util_replaceString(&m->message, "$TIMESTAMP", timestamp);
+
         Util_replaceString(&m->subject, "$SERVICE", e->source->name);
         Util_replaceString(&m->message, "$SERVICE", e->source->name);
 

@@ -189,9 +189,36 @@ static void close_server(SendMail_T *S) {
 /**
  * Send mail messages via SMTP
  * @param mail A Mail object
- * @return false if failed, true if succeeded
+ * @return true if failed, false if succeeded
  */
 boolean_t sendmail(Mail_T mail) {
+        if (Run.alert_command) {
+                ASSERT(mail);
+                boolean_t cmd_failed = false;
+                for (Mail_T m = mail; m; m = m->next) {
+                        char command[512];
+                        snprintf(command, sizeof(command), "%s %s", Run.alert_command, m->to);
+                        FILE *cmd = popen(command, "w");
+                        if (cmd == NULL) {
+                                LogError("Failed to run alert command: %s\n", command);
+                                cmd_failed = true;
+                                continue;
+                        }
+                        LogInfo("Running alert command: %s\n", command);
+                        fprintf(cmd, "%s\n", m->message);
+                        int status = pclose(cmd);
+                        int code = WEXITSTATUS(status);
+                        if (code == 0) {
+                                LogInfo("Alert command has run successfully\n");
+                        } else {
+                                LogError("Alert command exited with status: %d\n", code);
+                                cmd_failed = true;
+                                continue;
+                        }
+                }
+                return cmd_failed;
+        }
+
         SendMail_T S;
         boolean_t failed = false;
         char now[STRLEN];
