@@ -904,8 +904,10 @@ void Util_printRunList() {
         }
 
         {
+                printf(" %-18s = %s\n", "Alert command", is_str_defined(Run.alert_command));
+
                 for (Mail_T list = Run.maillist; list; list = list->next) {
-                        printf(" %-18s = %s\n", "Alert mail to", is_str_defined(list->to));
+                        printf(" %-18s = %s\n", "Alert to", is_str_defined(list->to));
                         printf("   %-16s = ", "Alert on");
                         printevents(list->events);
                         if (list->reminder)
@@ -1362,7 +1364,7 @@ void Util_printService(Service_T s) {
         }
 
         for (Mail_T o = s->maillist; o; o = o->next) {
-                printf(" %-20s = %s\n", "Alert mail to", is_str_defined(o->to));
+                printf(" %-20s = %s\n", "Alert to", is_str_defined(o->to));
                 printf("   %-18s = ", "Alert on");
                 printevents(o->events);
                 if (o->reminder)

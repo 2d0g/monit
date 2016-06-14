@@ -1,3 +1,34 @@
+Fork of [monit](https://bitbucket.org/tildeslash/monit) [5.18.0](https://bitbucket.org/tildeslash/monit/commits/tag/release-5-18-0).
+
+CHANGES:
+
+* New in config file: `set alert-command "/usr/local/bin/some-command"`.
+* New `$TIMESTAMP` variable in `mail-format`.
+
+EXAMPLE:
+
+```
+set alert-command "/usr/local/bin/wechat-notify"
+set alert user-wechat-open-id@user-name
+set mail-format {
+message:
+timestamp: $TIMESTAMP
+service: $SERVICE
+event: $EVENT
+action: $ACTION
+host: $HOST
+
+$DESCRIPTION
+}
+```
+
+If a Monit event occurs, Monit will execute this alert-command instead of sending email.
+The alert-command may read recipients from command arguments and the alert message from STDIN.
+
+----------
+
+Original:
+
 [![Monit](https://mmonit.com/monit/img/logo@2x.png)](https://mmonit.com/monit/) 
  
 

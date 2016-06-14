@@ -249,6 +249,7 @@ proto(col)?       { return PROTOCOL; }
 tcp               { return TCP; }
 tcpssl            { return TCPSSL; }
 udp               { return UDP; }
+alert[-]?command  { return ALERTCOMMAND; }
 alert             { return ALERT; }
 noalert           { return NOALERT; }
 mail-format       { return MAILFORMAT; }

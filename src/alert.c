@@ -108,6 +108,10 @@ static void _substitute(Mail_T m, Event_T e) {
         Util_replaceString(&m->subject, "$DATE", timestamp);
         Util_replaceString(&m->message, "$DATE", timestamp);
 
+        Time_fmt(timestamp, STRLEN, "%s", e->collected.tv_sec);
+        Util_replaceString(&m->subject, "$TIMESTAMP", timestamp);
+        Util_replaceString(&m->message, "$TIMESTAMP", timestamp);
+
         Util_replaceString(&m->subject, "$SERVICE", e->source->name);
         Util_replaceString(&m->message, "$SERVICE", e->source->name);
 
@@ -198,6 +202,32 @@ static boolean_t _send(List_T list) {
         boolean_t failed = false;
         if (List_length(list)) {
                 volatile Mail_T m = NULL;
+
+                if (Run.alert_command) {
+                        while ((m = List_pop(list))) {
+                                char command[512];
+                                snprintf(command, sizeof(command), "%s %s", Run.alert_command, m->to);
+                                FILE *cmd = popen(command, "w");
+                                if (cmd == NULL) {
+                                        LogError("Failed to run alert command: %s\n", command);
+                                        failed = true;
+                                        continue;
+                                }
+                                LogInfo("Running alert command: %s\n", command);
+                                fprintf(cmd, "%s\n", m->message);
+                                int status = pclose(cmd);
+                                int code = WEXITSTATUS(status);
+                                if (code == 0) {
+                                        LogInfo("Alert command has run successfully\n");
+                                } else {
+                                        LogError("Alert command exited with status: %d\n", code);
+                                        failed = true;
+                                        continue;
+                                }
+                        }
+                        return failed;
+                }
+
                 volatile SMTP_T smtp = NULL;
                 volatile MailServer_T mta = NULL;
                 TRY
